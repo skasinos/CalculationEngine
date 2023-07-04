@@ -1,0 +1,18 @@
+{
+  "name": "calculation_engine",
+  "version": "1.0.0",
+  "description": "## Set-up repository",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "shell": "cd calculation_engine && python manage.py shell_plus --bpython"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/skasinos/CalculationEngine.git"
+  },
+
+  "bugs": {
+    "url": "https://github.com/skasinos/CalculationEngine/issues"
+  },
+  "homepage": "https://github.com/skasinos/CalculationEngine#readme"
+}

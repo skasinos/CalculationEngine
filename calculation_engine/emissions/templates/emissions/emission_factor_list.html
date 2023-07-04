@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Emissions</title>
+    <style>
+        table {
+            border-collapse: separate;
+            border-spacing: 12px; /* Adjust the spacing value as needed */
+        }
+    </style>
+</head>
+<body>
+    <h1>Emissions</h1>
+
+    <!-- Add buttons for sorting and group -->
+    <button id="sort-co2e-btn">Sort by CO2e</button>
+    <button id="group-activity-btn">Group by Activity</button>
+
+    <!-- Filter options for scope and category. TODO: dynamically get from BE -->
+    <select id="scope-filter">
+        <option value="">All Scopes</option>
+        <option value="2">Scope 2</option>
+        <option value="3">Scope 3</option>
+    </select>
+
+    <select id="category-filter">
+        <option value="">All Categories</option>
+        <option value="1">Category 1</option>
+        <option value="6">Category 6</option>
+    </select>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Activity</th>
+                {% if group_by_activity %}
+                    <th>CO2e Sum</th>
+                {% else %}
+                    <th>Unit</th>
+                    <th>CO2e</th>
+                    <th>Scope</th>
+                    <th>Category</th>
+                {% endif %}
+            </tr>
+        </thead>
+        <tbody>
+            {% if group_by_activity %}
+                {% for emission in emissions %}
+                    <tr>
+                        <td>{{ emission.activity }}</td>
+                        <td>{{ emission.co2e_sum|floatformat:2 }}</td>
+                    </tr>
+                {% endfor %}
+                <tr>
+                    <td><strong>Total Emissions:</strong></td>
+                    <td>{{ total_emissions|floatformat:2 }}</td>
+                </tr>
+            {% else %}
+                {% for emission in emissions %}
+                    <tr>
+                        <td>{{ emission.activity }}</td>
+                        <td>{{ emission.unit }}</td>
+                        <td>{{ emission.co2e|floatformat:2 }}</td>
+                        <td>{{ emission.scope }}</td>
+                        <td>{{ emission.category }}</td>
+                    </tr>
+                {% endfor %}
+                <tr>
+                    <td colspan="5"><strong>Total Emissions:</strong> {{ total_emissions|floatformat:2 }}</td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+
+<script>
+    // JavaScript code for handling filter options and updating URL
+
+    // Get references to the filter elements
+    const scopeFilter = document.getElementById('scope-filter');
+    const categoryFilter = document.getElementById('category-filter');
+
+    // Add event listeners for filter options
+    scopeFilter.addEventListener('change', updateURL);
+    categoryFilter.addEventListener('change', updateURL);
+
+    // Function to update the URL based on selected filter values
+    function updateURL() {
+        const selectedScope = scopeFilter.value;
+        const selectedCategory = categoryFilter.value;
+
+        // Build the new URL with filter parameters
+        const url = new URL(window.location.href);
+
+        url.searchParams.set('scope', selectedScope);
+        url.searchParams.set('category', selectedCategory);
+
+        // Remove the 'group_by_activity' parameter from the URL
+        url.searchParams.delete('group_by_activity');
+
+        // Update the URL with the new filter parameters
+        history.replaceState(null, '', url);
+        window.location.reload(); // Reload the page
+    }
+
+    // Add event listener for the 'Sort by CO2e' button
+    const sortCo2eBtn = document.getElementById('sort-co2e-btn');
+    sortCo2eBtn.addEventListener('click', sortCo2e);
+
+    // Function to trigger sorting by CO2e
+    function sortCo2e() {
+        // Remove the 'group_by_activity' parameter from the URL
+        const url = new URL(window.location.href);
+        url.searchParams.delete('group_by_activity');
+        url.searchParams.delete('scope'); // Remove the 'scope' parameter
+        url.searchParams.delete('category'); // Remove the 'category' parameter
+        url.searchParams.set('sort_by_co2e', '1');
+
+        // Update the URL with the 'sort_by_co2e' parameter and without 'group_by_activity'
+        history.replaceState(null, '', url);
+        window.location.reload(); // Reload the page
+    }
+
+    // Add event listener for the 'Group by Activity' button
+    const groupActivityBtn = document.getElementById('group-activity-btn');
+    groupActivityBtn.addEventListener('click', groupActivity);
+
+    // Function to trigger grouping by activity
+    function groupActivity() {
+        // Remove the 'sort_by_co2e' parameter from the URL
+        const url = new URL(window.location.href);
+        url.searchParams.delete('sort_by_co2e');
+        url.searchParams.set('group_by_activity', '1');
+
+        // Update the URL with the 'group_by_activity' parameter and without 'sort_by_co2e'
+        history.replaceState(null, '', url);
+        window.location.reload(); // Reload the page
+    }
+</script>
+</body>
+</html>
