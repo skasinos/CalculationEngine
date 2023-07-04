@@ -13,8 +13,12 @@
 
 3. Open the project in an IDE e.g. [PyCharm](https://www.jetbrains.com/pycharm/). The interpreter should be picked up automatically.
 
+4. Enter directory where `manage.py` is located:
+      ```latex
+    cd calculation_engine
+      ```
 
-4. Start the development server:
+5. Start the development server:
 
       ```latex
     python manage.py runserver
